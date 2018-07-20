@@ -52,16 +52,15 @@ class Actor {
   }
 
   isIntersect(item) {
-    if (this === item) return false;
+    if (this === item) {
+      return false
+    };
     if (!(item instanceof Actor)) {
       throw new Error('Передан не объект типа Vector');
     } else if (item === undefined) {
       throw new Error('Объект не может быть пустым')
     }
-    if ((item.left >= this.right) || (item.right <= this.left) || (item.top >= this.bottom) || (item.bottom <= this.top)) {
-      return false;
-    }
-    return true;
+    return !((item.left >= this.right) || (item.right <= this.left) || (item.top >= this.bottom) || (item.bottom <= this.top));
   }
 }
 
@@ -71,8 +70,8 @@ class Level {
     this.grid = grid;
     this.actors = actors;
     this.height = grid.length;
-    this.player = actors.find(el => el.type === 'player');
-    this.width = Math.max(0, ...(this.grid.map(el => el.length)));
+    this.player = actors.find(actor => actor.type === 'player');
+    this.width = Math.max(0, ...(this.grid.map(item => item.length)));
     this.status = null;
     this.finishDelay = 1;
   }
@@ -89,12 +88,7 @@ class Level {
     }
     if (this.actors === undefined || this.actors.length === 1) {
       return undefined;
-    }
-    for (let actor of this.actors) {
-      if (player.isIntersect(actor)) {
-        return actor;
-      }
-    }
+    } else return this.actors.find(actor => actor.isIntersect(player));
   }
 
   obstacleAt(pos, size) {
@@ -114,9 +108,9 @@ class Level {
     }
     for (let y = top; y < bottom; y++) {
       for (let x = left; x < right; x++) {
-        const gridLevel = this.grid[y][x];
-        if (gridLevel) {
-          return gridLevel;
+        const gridBlock = this.grid[y][x];
+        if (gridBlock) {
+          return gridBlock;
         }
       }
     }
@@ -134,10 +128,7 @@ class Level {
   }
 
   playerTouched(touch, actor) {
-    if (this.status !== null) {
-      return;
-    }
-    if (['lava', 'fireball'].some((el) => el === touch)) {
+    if (['lava', 'fireball'].some((block) => block === touch)) {
       return this.status = 'lost';
     }
     if (touch === 'coin' && actor.type === 'coin') {
