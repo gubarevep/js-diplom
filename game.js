@@ -71,7 +71,7 @@ class Level {
     this.actors = actors;
     this.height = grid.length;
     this.player = actors.find(actor => actor.type === 'player');
-    this.width = Math.max(0, ...(this.grid.map(item => item.length)));
+    this.width = Math.max(0, ...(this.grid.map(row => row.length)));
     this.status = null;
     this.finishDelay = 1;
   }
@@ -108,9 +108,9 @@ class Level {
     }
     for (let y = top; y < bottom; y++) {
       for (let x = left; x < right; x++) {
-        const gridBlock = this.grid[y][x];
-        if (gridBlock) {
-          return gridBlock;
+        const gridCell = this.grid[y][x];
+        if (gridCell) {
+          return gridCell;
         }
       }
     }
@@ -167,10 +167,10 @@ class LevelParser {
 
 
   createActors(plan) {
-    var actors = [];
+    let actors = [];
     plan.forEach((line, y) => {
       line.split('').forEach((symbol, x) => {
-        var constructor = this.dictionary[symbol];
+        const constructor = this.dictionary[symbol];
         if (!(typeof constructor === 'function' && new constructor instanceof Actor)) return;
         actors.push(new constructor(new Vector(x, y)));
       });
